@@ -26,5 +26,12 @@ added clusterbomb and ultraslime
 26/9
 GUI exists. Had some issues with deepcopy but got there. need to make cleaner and improve GUI. is absolute bare bones rn. but it works
 
+9/2
+it has been too long, getting back into this is tough. increased window size and removed autoplay
+
+5/3
+added bezier curve cursor targeting. yet to tie into actual card targeting.
+
 # TODO
 consider queue system becoming priority queue so some things like death and tap can have extra sorting to order. only implement if needed. current queue system may be adequate
+enhance cards visually and make draggable

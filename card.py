@@ -8,9 +8,9 @@ class Card:
 	def __str__(self) -> str:
 		return self.name
 	
-	def render(self, screen, pos, size=100):
+	def render(self, screen, pos, size=150):
 		x, y = pos
-		height = size
+		height = size*1.5
 		width = size
 
 		# Set up font

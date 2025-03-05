@@ -5,7 +5,7 @@ from card import Card
 
 # Initialize Pygame and main screen
 pygame.init()
-screen = pygame.display.set_mode((800, 450))
+screen = pygame.display.set_mode((1500, 900))
 pygame.display.set_caption('Dungeon Deck')
 clock = pygame.time.Clock()
 
@@ -24,7 +24,7 @@ def main():
 			if event.type == pygame.KEYDOWN:
 				if event.key == pygame.K_ESCAPE:
 					return
-				if event.key == pygame.K_RETURN and not game.events:
+				if (event.key == pygame.K_RETURN or event.key == pygame.K_SPACE) and not game.events:
 					# take action
 					game = game.update()
 				keyheld.add(pygame.key.name(event.key))
@@ -32,8 +32,6 @@ def main():
 				keyheld.remove(pygame.key.name(event.key))
 
 		game.process()
-		if not game.events:
-			game = game.update()
 		if game.win is not None:
 			print(f'Player {game.win} wins!')
 			return

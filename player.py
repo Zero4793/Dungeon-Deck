@@ -13,11 +13,20 @@ class Player:
 		self.board = []
 		self.life = 20
 
-	def render(self, screen, y):
+	def render(self, screen):
+		W,H = screen.get_size()
 		font = pygame.font.SysFont('Arial', 30)
+		stats = font.render(f'Life: {self.life} | Deck: {len(self.deck)} | Hand: {len(self.hand)} | Grave: {len(self.graveyard)}', True, (200,200,200))  # Black text
+		if self.id == 0:
+			# self.renderHand(screen)
+			# self.renderBoard(screen)
+			y=0
+		else:
+			# self.renderHand(screen)
+			# self.renderBoard(screen)
+			y=H-200
 		for i,card in enumerate(self.board):
 			card.render(screen, (i*100, y))
-		stats = font.render(f'Life: {self.life} | Deck: {len(self.deck)} | Hand: {len(self.hand)} | Grave: {len(self.graveyard)}', True, (200,200,200))  # Black text
 		screen.blit(stats, (0, y+100))
 
 	def draw(self, num):

@@ -17,9 +17,9 @@ class Gamestate:
 			random.shuffle(player.deck)
 			# [player.hand.append(player.deck.pop()) for _ in range(3)]
 			player.draw(3)
+		self.time = 0
 		self.turn = 0
 		self.win = None
-		self.time = 0
 
 	def display(self):
 		for player in self.players:
@@ -28,7 +28,9 @@ class Gamestate:
 
 	def render(self, screen):
 		for player in self.players:
-			player.render(screen,200*player.id)
+			player.render(screen)
+		width,height = screen.get_size()
+		self.mouseTarget(screen,(width//2, height))
 
 	def process(self):
 		if self.time>0:
@@ -92,3 +94,20 @@ class Gamestate:
 		elif action[0] == 'attack-face':
 			action[1].attackFace(action[2]) # card atk player
 
+	def mouseTarget(self, screen, start):
+		mouse = pygame.Vector2(pygame.mouse.get_pos())
+		start_pos = pygame.Vector2(start)
+		end_pos = mouse
+
+		distance = start_pos.distance_to(end_pos)
+		midpoint = (start_pos + end_pos)/2
+		cx,cy = .75,.5 #curvature amounts
+		control_offset = pygame.Vector2((start_pos.x-mouse.x)*cx, -distance*cy)
+		control_point = midpoint + control_offset
+
+		segments = 36
+		for t in (i / segments for i in range(segments + 1)):
+			x = (1 - t)**2 * start_pos.x + 2 * (1 - t) * t * control_point.x + t**2 * end_pos.x
+			y = (1 - t)**2 * start_pos.y + 2 * (1 - t) * t * control_point.y + t**2 * end_pos.y
+			pygame.draw.circle(screen, (200, 200, 200), (int(x), int(y)), 5)
+			# velocity
