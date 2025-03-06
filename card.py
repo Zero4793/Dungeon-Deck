@@ -8,22 +8,13 @@ class Card:
 	def __str__(self) -> str:
 		return self.name
 	
-	def render(self, screen, pos, size=150):
-		x, y = pos
-		height = size*1.5
-		width = size
-
-		# Set up font
-		pygame.font.init()
-		font = pygame.font.SysFont('Arial', 20)
-
-		# Draw the rectangle
-		pygame.draw.rect(screen, (200, 200, 200), (x, y, width, height))  # White background
-		pygame.draw.rect(screen, (0, 0, 0), (x, y, width, height), 2)  # Black border
-
-		# Render the card name at the top
-		name_text = font.render(self.name, True, (0, 0, 0))  # Black text
-		screen.blit(name_text, (x+5, y+5))
+	def displayInHand(self, screen, x, y):
+		width = 100
+		height = width*1.5
+		pygame.draw.rect(screen, (200,200,200), (x, y, width, height))
+		pygame.draw.rect(screen, (150,150,150), (x, y, width, height), 5)
+		write = self.owner.gamestate.write
+		write(screen, self.name, (x+5, y+5), 15, (0,0,0))
 
 class Spell(Card):
 	def __init__(self, _owner, _name):
@@ -70,6 +61,29 @@ class Summon(Card):
 	def __str__(self) -> str:
 		t = '💤 ' if self.tapped else '💪 '
 		return f'{t}{self.name} {self.atk}/{self.hp}'
+
+	def displayInHand(self, screen, x, y):
+		super().displayInHand(screen, x, y)
+		pygame.draw.rect(screen, (100,100,150), (x+5, y+120, 25, 25))
+		pygame.draw.rect(screen, (150,100,100), (x+70, y+120, 25, 25))
+		write = self.owner.gamestate.write
+		write(screen, f"{f'{self.atk}'}", (x+10, y+125), 15, (0,0,0))
+		write(screen, f"{f'{self.hp}':>7}", (x+63, y+125), 15, (0,0,0))
+
+	def displayOnBoard(self, screen, x, y):
+		col = (200,200,200)
+		if self.tapped:
+			col = (100,100,100)
+		elif self.dead: #dead not working properly? fix its logic
+			col = (200,100,100)
+		pygame.draw.rect(screen, col, (x, y, 100, 100))
+		pygame.draw.rect(screen, (150,150,150), (x, y, 100, 100), 5)
+		write = self.owner.gamestate.write
+		write(screen, self.name, (x+5, y+5), 15, (0,0,0))
+		pygame.draw.rect(screen, (100,100,150), (x+5, y+70, 25, 25))
+		pygame.draw.rect(screen, (150,100,100), (x+70, y+70, 25, 25))
+		write(screen, f"{f'{self.atk}'}", (x+10, y+75), 15, (0,0,0))
+		write(screen, f"{f'{self.hp}\{self.maxhp}':>7}", (x+63, y+75), 15, (0,0,0))
 
 	def render(self, screen, pos, size=100):
 		x, y = pos

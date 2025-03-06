@@ -38,8 +38,7 @@ def main():
 
 		col = (50,50,50) if game.events else (0)
 		screen.fill(col)
-		# game.display()
-		game.render(screen)
+		game.display(screen)
 
 		# Update/render the display
 		pygame.display.flip()

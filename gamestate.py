@@ -16,21 +16,17 @@ class Gamestate:
 			player.deck = library.pickDeck(player)
 			random.shuffle(player.deck)
 			# [player.hand.append(player.deck.pop()) for _ in range(3)]
-			player.draw(3)
+			player.draw(7)
 		self.time = 0
 		self.turn = 0
 		self.win = None
 
-	def display(self):
-		for player in self.players:
-			print(player)
-		print('-'*50)
+	def display(self, screen):
+		self.players[0].displayRival(screen)
+		self.players[1].displaySelf(screen)
 
-	def render(self, screen):
-		for player in self.players:
-			player.render(screen)
 		width,height = screen.get_size()
-		self.mouseTarget(screen,(width//2, height))
+		self.mouseTarget(screen, (width//2, height))
 
 	def process(self):
 		if self.time>0:
@@ -109,5 +105,9 @@ class Gamestate:
 		for t in (i / segments for i in range(segments + 1)):
 			x = (1 - t)**2 * start_pos.x + 2 * (1 - t) * t * control_point.x + t**2 * end_pos.x
 			y = (1 - t)**2 * start_pos.y + 2 * (1 - t) * t * control_point.y + t**2 * end_pos.y
-			pygame.draw.circle(screen, (200, 200, 200), (int(x), int(y)), 5)
-			# velocity
+			pygame.draw.circle(screen, (50, 50, 50), (int(x), int(y)), 5)
+
+	def write(self, screen, text, pos, size=30, color=(200,200,200), font='Arial'):
+		font = pygame.font.SysFont(font, size)
+		text = font.render(text, True, color)
+		screen.blit(text, pos)
