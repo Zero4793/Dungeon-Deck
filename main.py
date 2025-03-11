@@ -35,6 +35,9 @@ def main():
 		if game.win is not None:
 			print(f'Player {game.win} wins!')
 			return
+		
+		# if not game.events:
+		# 	game = game.update()
 
 		col = (50,50,50) if game.events else (0)
 		screen.fill(col)

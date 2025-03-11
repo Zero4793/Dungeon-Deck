@@ -5,6 +5,7 @@ import library
 import random
 from collections import deque
 import pygame
+from button import Button
 
 class Gamestate:
 	def __init__(self):
@@ -21,14 +22,21 @@ class Gamestate:
 		self.turn = 0
 		self.win = None
 
+		self.mouseTarget = None
+		self.voidButton = Button(self, (0,0), (1600,900), None, None) # does nothing itself. improves click detection
+		self.endTurnButton = Button(self, (1350,700), (160,40), ["End Turn","End Turn?","Confirm?","Rivals Turn..."], [(150,100,100), (250,150,150), (250,50,50), (250,0,0)])
+
 	def display(self, screen):
 		self.players[0].displayRival(screen)
 		self.players[1].displaySelf(screen)
 
 		width,height = screen.get_size()
-		self.mouseTarget(screen, (width//2, height))
+		self.cursorTarget(screen, (width//2, height))
+
+		self.endTurnButton.display(screen)
 
 	def process(self):
+		self.processButtons()
 		if self.time>0:
 			self.time -=1
 			return
@@ -36,6 +44,14 @@ class Gamestate:
 			return
 		self.time, action = self.events.popleft()
 		action()
+
+	def processButtons(self):
+		self.endTurnButton.process()
+		if self.endTurnButton.held():
+			self.endTurnButton.pos = pygame.mouse.get_pos() - pygame.Vector2(self.endTurnButton.dim) / 2
+		if self.endTurnButton.active:
+			self.endTurnButton.active = False
+		self.voidButton.process()
 
 	def getPlayers(self) -> tuple[Player,Player]:
 		return (self.players[self.turn], self.players[(self.turn+1)%2])
@@ -90,7 +106,7 @@ class Gamestate:
 		elif action[0] == 'attack-face':
 			action[1].attackFace(action[2]) # card atk player
 
-	def mouseTarget(self, screen, start):
+	def cursorTarget(self, screen, start):
 		mouse = pygame.Vector2(pygame.mouse.get_pos())
 		start_pos = pygame.Vector2(start)
 		end_pos = mouse

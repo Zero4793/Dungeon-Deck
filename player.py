@@ -30,20 +30,20 @@ class Player:
 		return
 	
 	def displayDecks(self, screen, px, py):
-		# Draw deck
-		pygame.draw.rect(screen, (100,100,100), (px, py, 100, 150))
-		self.gamestate.write(screen,f'{len(self.deck)}', (px+20, py+40), 50)
 		# Graveyard
-		px += screen.get_width()-105
 		pygame.draw.rect(screen, (100,100,100), (px, py, 100, 150))
-		self.gamestate.write(screen,f'{len(self.graveyard)}', (px+30, py+40), 50)
+		self.gamestate.write(screen,f'{len(self.graveyard)}', (px+25, py+45), 50)
+		# Draw deck
+		px += screen.get_width()-110
+		pygame.draw.rect(screen, (100,100,100), (px, py, 100, 150))
+		self.gamestate.write(screen,f'{len(self.deck)}', (px+25, py+45), 50)
 
 	def displayHand(self, screen, mid, y):
 		w = min(800,105*len(self.hand))
 		d = (w-100)/(len(self.hand)-1) if len(self.hand)>1 else 0
 		x = mid - w/2
 		for card in self.hand:
-			card.displayInHand(screen, x, y)
+			card.displayInHand(screen, x, y, 10)
 			x += d
 
 	def displayRivalHand(self, screen, mid, y):
@@ -51,8 +51,7 @@ class Player:
 		d = (w-100)/(len(self.hand)-1) if len(self.hand)>1 else 0
 		x = mid - w/2
 		for card in self.hand:
-			pygame.draw.rect(screen, (200,200,200), (x, y, 100, 150))
-			pygame.draw.rect(screen, (150,150,150), (x, y, 100, 150), 5)
+			card.displayInRivalHand(screen, x, y, 10)
 			x += d
 	
 	def displayBoard(self, screen, mid, y):
@@ -60,7 +59,7 @@ class Player:
 		d = (w-100)/(len(self.board)-1) if len(self.board)>1 else 0
 		x = mid - w/2
 		for card in self.board:
-			card.displayOnBoard(screen, x, y)
+			card.displayOnBoard(screen, x, y, 5)
 			x += d
 
 	def draw(self, num):
