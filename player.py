@@ -17,41 +17,31 @@ class Player:
 		W,H = screen.get_size()
 		self.gamestate.write(screen,f'Life: {self.life}', (110,H-40))
 		self.displayDecks(screen,5,H-155)
-		self.displayHand(screen,W/2,H-150)
+		self.displayHand(screen,W/2,H-150,False)
 		self.displayBoard(screen,W/2,H/2+25)
-		return
 
 	def displayRival(self, screen):
 		W,H = screen.get_size()
 		self.gamestate.write(screen,f'Life: {self.life}', (110,5))
 		self.displayDecks(screen,5,5)
-		self.displayRivalHand(screen,W/2,0)
+		self.displayHand(screen,W/2,0,True)
 		self.displayBoard(screen,W/2,H/2-125)
-		return
 	
 	def displayDecks(self, screen, px, py):
 		# Graveyard
 		pygame.draw.rect(screen, (100,100,100), (px, py, 100, 150))
 		self.gamestate.write(screen,f'{len(self.graveyard)}', (px+25, py+45), 50)
-		# Draw deck
+		# Deck
 		px += screen.get_width()-110
 		pygame.draw.rect(screen, (100,100,100), (px, py, 100, 150))
 		self.gamestate.write(screen,f'{len(self.deck)}', (px+25, py+45), 50)
 
-	def displayHand(self, screen, mid, y):
+	def displayHand(self, screen, mid, y, hide):
 		w = min(800,105*len(self.hand))
 		d = (w-100)/(len(self.hand)-1) if len(self.hand)>1 else 0
 		x = mid - w/2
 		for card in self.hand:
-			card.displayInHand(screen, x, y, 10)
-			x += d
-
-	def displayRivalHand(self, screen, mid, y):
-		w = min(800,105*len(self.hand))
-		d = (w-100)/(len(self.hand)-1) if len(self.hand)>1 else 0
-		x = mid - w/2
-		for card in self.hand:
-			card.displayInRivalHand(screen, x, y, 10)
+			card.displayCard(screen, x, y, hide, 10)
 			x += d
 	
 	def displayBoard(self, screen, mid, y):
@@ -59,7 +49,7 @@ class Player:
 		d = (w-100)/(len(self.board)-1) if len(self.board)>1 else 0
 		x = mid - w/2
 		for card in self.board:
-			card.displayOnBoard(screen, x, y, 5)
+			card.displayToken(screen, x, y, 5)
 			x += d
 
 	def draw(self, num):
@@ -70,6 +60,15 @@ class Player:
 				print(f'Player {self.id} draws a card')
 				self.hand.append(self.deck.pop())
 			self.gamestate.events.append((30, action))
+
+	def summon(self, _card):
+		def action():
+			print(f'{_card.name} summoned')
+			card = deepcopy(_card)
+			self.board.append(card)
+			card.owner = self
+			card.summon()
+		self.gamestate.events.append((30, action))
 
 	def startTurn(self):
 		print(f'Player {self.id} starts turn:')
@@ -91,11 +90,3 @@ class Player:
 		s += f'\nBoard: {str([str(card) for card in self.board])}'
 		return s
 
-	def summon(self, _card):
-		def action():
-			print(f'{_card.name} summoned')
-			card = deepcopy(_card)
-			self.board.append(card)
-			card.owner = self
-			card.summon()
-		self.gamestate.events.append((30, action))

@@ -1,29 +1,25 @@
 import pygame
+from button import Button
 
 class Card:
 	def __init__(self, _owner, _name):
 		self.owner = _owner
 		self.name = _name
 		self.pos = pygame.Vector2(0,0)
+		self.button = Button(self.owner.gamestate, (0,0), (100,150), None, None)
 
 	def __str__(self) -> str:
 		return self.name
 	
-	def displayInHand(self, screen, x, y, smooth=1):
+	def displayCard(self, screen, x, y, hide, smooth=1):
 		if smooth:
 			self.pos += (pygame.Vector2(x,y)-self.pos)/smooth
 		width, height = 100, 150
 		pygame.draw.rect(screen, (200,200,200), (self.pos.x, self.pos.y, width, height))
 		pygame.draw.rect(screen, (150,150,150), (self.pos.x, self.pos.y, width, height), 5)
+		if hide: return
 		write = self.owner.gamestate.write
-		write(screen, self.name, (self.pos.x+5, self.pos.y+5), 15, (0,0,0))
-	
-	def displayInRivalHand(self, screen, x, y, smooth=1):
-		if smooth:
-			self.pos += (pygame.Vector2(x,y)-self.pos)/smooth
-		width, height = 100, 150
-		pygame.draw.rect(screen, (200,200,200), (self.pos.x, self.pos.y, width, height))
-		pygame.draw.rect(screen, (150,150,150), (self.pos.x, self.pos.y, width, height), 5)
+		write(screen, self.name, (self.pos.x+7, self.pos.y+5), 15, (0,0,0))
 
 class Spell(Card):
 	def __init__(self, _owner, _name):
@@ -69,15 +65,16 @@ class Summon(Card):
 		t = '💤 ' if self.tapped else '💪 '
 		return f'{t}{self.name} {self.atk}/{self.hp}'
 
-	def displayInHand(self, screen, x, y, smooth=1):
-		super().displayInHand(screen, x, y, smooth)
+	def displayCard(self, screen, x, y, hide, smooth=1):
+		super().displayCard(screen, x, y, hide, smooth)
+		if hide: return
 		pygame.draw.rect(screen, (100,100,150), (self.pos.x+5, self.pos.y+120, 25, 25))
 		pygame.draw.rect(screen, (150,100,100), (self.pos.x+70, self.pos.y+120, 25, 25))
 		write = self.owner.gamestate.write
 		write(screen, f"{f'{self.atk}'}", (self.pos.x+10, self.pos.y+125), 15, (0,0,0))
 		write(screen, f"{f'{self.hp}':>7}", (self.pos.x+63, self.pos.y+125), 15, (0,0,0))
 
-	def displayOnBoard(self, screen, x, y, smooth=1):
+	def displayToken(self, screen, x, y, smooth=1):
 		if smooth:
 			self.pos += (pygame.Vector2(x,y)-self.pos)/smooth
 		col = (200,200,200)
@@ -88,37 +85,13 @@ class Summon(Card):
 		pygame.draw.rect(screen, col, (self.pos.x, self.pos.y, 100, 100))
 		pygame.draw.rect(screen, (150,150,150), (self.pos.x, self.pos.y, 100, 100), 5)
 		write = self.owner.gamestate.write
-		write(screen, self.name, (self.pos.x+5, self.pos.y+5), 15, (0,0,0))
+		write(screen, self.name, (self.pos.x+7, self.pos.y+5), 15, (0,0,0))
 		pygame.draw.rect(screen, (100,100,150), (self.pos.x+5, self.pos.y+70, 25, 25))
 		pygame.draw.rect(screen, (150,100,100), (self.pos.x+70, self.pos.y+70, 25, 25))
 		write(screen, f"{f'{self.atk}'}", (self.pos.x+10, self.pos.y+75), 15, (0,0,0))
 		write(screen, f"{f'{self.hp}\{self.maxhp}':>7}", (self.pos.x+63, self.pos.y+75), 15, (0,0,0))
 
-	def render(self, screen, pos, size=100):
-		x, y = pos
-		height = size
-		width = size
-
-		# Set up font
-		pygame.font.init()
-		font = pygame.font.SysFont('Arial', 20)
-
-		# Draw the rectangle
-		fill = (200, 200, 200)
-		if self.tapped:
-			fill = (150, 150, 150)
-		if self.dead:
-			fill = (200, 100, 100)
-		pygame.draw.rect(screen, fill, (x, y, width, height))  # background
-		pygame.draw.rect(screen, (0), (x, y, width, height), 2)  # border
-
-		# Render the card name at the top
-		name_text = font.render(self.name, True, (0, 0, 0))  # Black text
-		screen.blit(name_text, (x+5, y+5))
-
-		# Render the card stats at the bottom
-		stats_text = font.render(f'{self.atk}/{self.hp}', True, (0, 0, 0))  # Black text
-		screen.blit(stats_text, (x+5, y+height-25))
+	### Actions
 
 	def play(self, pos):
 		def action():
