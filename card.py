@@ -6,7 +6,7 @@ class Card:
 		self.owner = _owner
 		self.name = _name
 		self.pos = pygame.Vector2(0,0)
-		self.button = Button(self.owner.gamestate, (0,0), (100,150), None, None)
+		self.button = Button(self.owner.gamestate, (0,0), (100,150), None, ((200,200,200), (150,150,150), (100,100,100), (0,0,0)))
 
 	def __str__(self) -> str:
 		return self.name
@@ -14,6 +14,8 @@ class Card:
 	def displayCard(self, screen, x, y, hide, smooth=1):
 		if smooth:
 			self.pos += (pygame.Vector2(x,y)-self.pos)/smooth
+			self.button.pos += (pygame.Vector2(x,y)-self.button.pos)/smooth
+			# self.button.pos = self.pos
 		width, height = 100, 150
 		pygame.draw.rect(screen, (200,200,200), (self.pos.x, self.pos.y, width, height))
 		pygame.draw.rect(screen, (150,150,150), (self.pos.x, self.pos.y, width, height), 5)

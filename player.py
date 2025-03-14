@@ -13,19 +13,23 @@ class Player:
 		self.board = []
 		self.life = 20
 
+	def process(self):
+		for card in self.hand:
+			card.button.process()
+
 	def displaySelf(self, screen):
 		W,H = screen.get_size()
 		self.gamestate.write(screen,f'Life: {self.life}', (110,H-40))
 		self.displayDecks(screen,5,H-155)
-		self.displayHand(screen,W/2,H-150,False)
 		self.displayBoard(screen,W/2,H/2+25)
+		self.displayHand(screen,W/2,H-150,False)
 
 	def displayRival(self, screen):
 		W,H = screen.get_size()
 		self.gamestate.write(screen,f'Life: {self.life}', (110,5))
 		self.displayDecks(screen,5,5)
-		self.displayHand(screen,W/2,0,True)
 		self.displayBoard(screen,W/2,H/2-125)
+		self.displayHand(screen,W/2,0,True)
 	
 	def displayDecks(self, screen, px, py):
 		# Graveyard
@@ -40,10 +44,19 @@ class Player:
 		w = min(800,105*len(self.hand))
 		d = (w-100)/(len(self.hand)-1) if len(self.hand)>1 else 0
 		x = mid - w/2
+		held = None
 		for card in self.hand:
 			card.displayCard(screen, x, y, hide, 10)
 			x += d
-	
+			if hide: continue
+			if card.button.held():
+				held = card
+			elif card.button.hover:
+				card.pos.y-=5
+		if held:
+			held.owner.gamestate.cursorTarget(screen, held.pos + pygame.Vector2(50, 0))
+			held.pos.y-=10
+
 	def displayBoard(self, screen, mid, y):
 		w = min(screen.get_width()-100,105*len(self.board))
 		d = (w-100)/(len(self.board)-1) if len(self.board)>1 else 0

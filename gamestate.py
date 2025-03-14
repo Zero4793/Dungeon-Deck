@@ -29,13 +29,10 @@ class Gamestate:
 	def display(self, screen):
 		self.players[0].displayRival(screen)
 		self.players[1].displaySelf(screen)
-
-		width,height = screen.get_size()
-		self.cursorTarget(screen, (width//2, height))
-
 		self.endTurnButton.display(screen)
 
 	def process(self):
+		self.players[1].process()
 		self.processButtons()
 		if self.time>0:
 			self.time -=1
@@ -46,6 +43,8 @@ class Gamestate:
 		action()
 
 	def processButtons(self):
+		for card in self.players[0].hand:
+			card.button.process()
 		self.endTurnButton.process()
 		if self.endTurnButton.held():
 			self.endTurnButton.pos = pygame.mouse.get_pos() - pygame.Vector2(self.endTurnButton.dim) / 2
@@ -121,7 +120,7 @@ class Gamestate:
 		for t in (i / segments for i in range(segments + 1)):
 			x = (1 - t)**2 * start_pos.x + 2 * (1 - t) * t * control_point.x + t**2 * end_pos.x
 			y = (1 - t)**2 * start_pos.y + 2 * (1 - t) * t * control_point.y + t**2 * end_pos.y
-			pygame.draw.circle(screen, (50, 50, 50), (int(x), int(y)), 5)
+			pygame.draw.circle(screen, (150, 50, 50), (int(x), int(y)), 5)
 
 	def write(self, screen, text, pos, size=30, color=(200,200,200), font='Arial'):
 		font = pygame.font.SysFont(font, size)
