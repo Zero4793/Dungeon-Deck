@@ -1,0 +1,1 @@
+Incoming damage to HP is reduced by X. Tough does not reduce damage to [[Block]]

@@ -1,0 +1,1 @@
+Deals burn if hurting player; mill to exile instead of graveyard.

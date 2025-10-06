@@ -1,0 +1,1 @@
+Cannot be targeted by enemy attacks or spells by default.

@@ -1,0 +1,1 @@
+a player must pay the cost to target this summon

@@ -1,0 +1,1 @@
+can play target from hand for free

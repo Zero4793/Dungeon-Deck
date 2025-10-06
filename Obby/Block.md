@@ -1,0 +1,1 @@
+A buffer against damage. Is lost at start of turn.

@@ -1,0 +1,1 @@
+continue/recast effect on consecutive turns if cost is payed. Else card resolves to graveyard.

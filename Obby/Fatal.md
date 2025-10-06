@@ -1,0 +1,1 @@
+Ignore HP *Kills those it damages regardless of their health*

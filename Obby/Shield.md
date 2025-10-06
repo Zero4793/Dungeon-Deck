@@ -1,0 +1,1 @@
+Provides [[Cover]] to adjacent minions.
